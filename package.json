@@ -3,7 +3,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
