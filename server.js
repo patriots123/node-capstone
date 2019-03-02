@@ -14,8 +14,6 @@ var session      = require('express-session');
 
 var configDB = require('./config/database.js');
 
-const { Payment } = require('./app/models/payment');
-
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
 
@@ -34,46 +32,56 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
-app.get('/payments', (req, res) => {
-  Payment
-    .find()
-    .then(payments => {
-      res.json(payments);
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ error: 'something went terribly wrong' });
-    });
-});
-
-app.post('/payments', (req, res) => {
-//   const requiredFields = ['title', 'content', 'author'];
-//   for (let i = 0; i < requiredFields.length; i++) {
-//     const field = requiredFields[i];
-//     if (!(field in req.body)) {
-//       const message = `Missing \`${field}\` in request body`;
-//       console.error(message);
-//       return res.status(400).send(message);
-//     }
-//   }
-
-  Payment
-    .create({
-      amount: req.body.amount,
-      description: req.body.description,
-      paymentDate: req.body.paymentDate
-    })
-    .then(payment => res.status(201).json(payment))
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ error: 'Something went wrong' });
-    });
-
-});
-
 // routes ======================================================================
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/userRoutes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/paymentRoutes.js')(app, passport);
 
 // launch ======================================================================
 app.listen(port);
 console.log('The magic happens on port ' + port);
+
+
+let server;
+
+// this function connects to our database, then starts the server
+function runServer(databaseUrl, port) {
+  return new Promise((resolve, reject) => {
+    mongoose.connect(databaseUrl, err => {
+      if (err) {
+        return reject(err);
+      }
+      server = app.listen(port, () => {
+        console.log(`Your app is listening on port ${port}`);
+        resolve();
+      })
+        .on('error', err => {
+          mongoose.disconnect();
+          reject(err);
+        });
+    });
+  });
+}
+
+// this function closes the server, and returns a promise. we'll
+// use it in our integration tests later.
+function closeServer() {
+  return mongoose.disconnect().then(() => {
+    return new Promise((resolve, reject) => {
+      console.log('Closing server');
+      server.close(err => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
+    });
+  });
+}
+
+// if server.js is called directly (aka, with `node server.js`), this block
+// runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
+if (require.main === module) {
+  runServer(DATABASE_URL).catch(err => console.error(err));
+}
+
+module.exports = { runServer, app, closeServer };
