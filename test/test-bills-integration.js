@@ -7,25 +7,24 @@ const mongoose = require('mongoose');
 
 const expect = chai.expect;
 
-// const { Payment } = require('../app/models/payment');
+const { Payment } = require('../app/models/payment');
 const {app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL, PORT} = require('../config/database.js');
 
 chai.use(chaiHttp);
 
-describe("test successful page loads", function() {
+describe("test index page successfully loads", function() {
 
-    before(function() {
-      return runServer(PORT);
-    });
+    // before(function() {
+    //   return runServer(PORT);
+    // });
 
-    after(function() {
-      return closeServer();
-    });
+    // after(function() {
+    //   return closeServer();
+    // });
 
     describe("test root", function() {
-
-        it ("should return 200", () => {
+        it ("should exist and return 200", () => {
           return chai.request(app)
             .get('/')
             .then(function(res) {

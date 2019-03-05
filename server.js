@@ -3,6 +3,7 @@
 var express  = require('express');
 var app      = express();
 var port     = process.env.PORT || 8080;
+// DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost/bill-app';
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -93,8 +94,8 @@ function closeServer() {
 
 // if server.js is called directly (aka, with `node server.js`), this block
 // runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
-if (require.main === module) {
-  runServer(DATABASE_URL).catch(err => console.error(err));
-}
+// if (require.main === module) {
+//   runServer(DATABASE_URL).catch(err => console.error(err));
+// }
 
 module.exports = { runServer, app, closeServer };

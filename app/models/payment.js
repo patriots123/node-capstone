@@ -8,6 +8,7 @@ const paymentSchema = mongoose.Schema({
   description: String,
   user: String,
   paymentDate: Date,
+  frequency: String,
   createdDate: {type: Date, default: Date.now}
 });
 
