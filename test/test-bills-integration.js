@@ -27,7 +27,7 @@ describe("test index page successfully loads", function() {
         it ("should exist and return 200", () => {
           return chai.request(app)
             .get('/')
-            .then(function(res) {
+            .then((res) => {
               expect(res).to.have.status(200);
             })
         });

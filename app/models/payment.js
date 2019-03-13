@@ -6,26 +6,21 @@ mongoose.Promise = global.Promise;
 const paymentSchema = mongoose.Schema({
   amount: Number,
   description: String,
-  user: String,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   paymentDate: Date,
   frequency: String,
   createdDate: {type: Date, default: Date.now}
 });
 
+paymentSchema.pre('find', function(next) {
+  this.populate('user');
+  next();
+});
 
-// blogPostSchema.virtual('authorName').get(function() {
-//   return `${this.author.firstName} ${this.author.lastName}`.trim();
-// });
-
-// blogPostSchema.methods.serialize = function() {
-//   return {
-//     id: this._id,
-//     author: this.authorName,
-//     content: this.content,
-//     title: this.title,
-//     created: this.created
-//   };
-// };
+paymentSchema.pre('findOne', function(next) {
+  this.populate('user');
+  next();
+});
 
 const Payment = mongoose.model('Payment', paymentSchema);
 
