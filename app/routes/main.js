@@ -1,5 +1,6 @@
 
 var User = require('../models/user');
+const { Payment } = require('../models/payment');
 
 module.exports = function(app, passport) {
 
@@ -36,9 +37,14 @@ module.exports = function(app, passport) {
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
     app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
+        Payment.find({user:req.user._id})
+            .then(payments => {
+                res.render('profile.ejs', {
+                    user : req.user,
+                    payments: sortUserPayments(payments)
+                });
+            })
+        
     });
 
     app.get('/users', (req, res) => {
@@ -47,7 +53,7 @@ module.exports = function(app, passport) {
           //.catch(errorHandler);
     });
 };
-
+ 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
@@ -59,3 +65,13 @@ function isLoggedIn(req, res, next) {
     res.redirect('/');
 }
 
+function sortUserPayments(payments) {
+    return payments.sort(compare);
+}
+
+//sort array of payments in ascending order
+function compare(a, b){
+  if (a.nextPaymentDate > b.nextPaymentDate) return 1;
+  if (a.nextPaymentDate < b.nextPaymentDate) return -1;
+  return 0;
+}

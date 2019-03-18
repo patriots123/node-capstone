@@ -6,7 +6,19 @@ const router = express.Router();
 const { Payment } = require('../models/payment');
 const { User } = require('../models/user');
 
-router.get('/', (req, res) => {
+router.get('/', isLoggedIn, (req, res) => {
+  Payment
+    .find({user: req.user._id})
+    .then(payments => {
+      res.json(payments);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went terribly wrong' });
+    });
+});
+
+router.get('/testget', (req, res) => {
   Payment
     .find()
     .then(payments => {
@@ -17,6 +29,7 @@ router.get('/', (req, res) => {
       res.status(500).json({ error: 'something went terribly wrong' });
     });
 });
+
 
 router.get('/:id', (req, res) => {
     User
@@ -30,22 +43,8 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/:id/user/:userID', (req,res) => {
-  Payment.findOne({_id: req.params.id})
-    .then((payment) => {
-      payment.user = userID;
-      return payment.save();
-    })
-    .then((payment) => {
-      res.send(payment).status(200)
-    })
-    .catch(err => {
-      res.json({message: 'this didnt work'});
-    });
-});
-
-router.post('/', (req, res) => {
-  const requiredFields = ['amount', 'description', 'paymentDate','frequency'];
+router.post('/', isLoggedIn, (req, res) => {
+  const requiredFields = ['amount', 'description', 'nextPaymentDate','frequency'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -58,14 +57,22 @@ router.post('/', (req, res) => {
     .create({
       amount: req.body.amount,
       description: req.body.description,
-      paymentDate: req.body.paymentDate,
-      frequency: req.body.frequency
+      nextPaymentDate: req.body.nextPaymentDate,
+      frequency: req.body.frequency,
+      user: req.user._id,
+      numPayments: 0,
+      totalAmountPaid: 0
     })
     .then(payment => res.status(201).json(payment))
+    .then(res.redirect('/profile'))
     .catch(err => {
       console.error(err);
       res.status(500).json({ error: 'Something went wrong' });
     });
+});
+
+router.post('/testpost', (req,res)=>{
+  res.send({body: req.body, user: req.user});
 });
 
 router.put('/:id', (req, res) => {
@@ -76,7 +83,7 @@ router.put('/:id', (req, res) => {
     }
 
     const updated = {};
-    const updateableFields = ['amount', 'description', 'paymentDate','frequency'];
+    const updateableFields = ['amount', 'description', 'nextPaymentDate','frequency'];
     updateableFields.forEach(field => {
       if (field in req.body) {
         updated[field] = req.body[field];
@@ -89,13 +96,13 @@ router.put('/:id', (req, res) => {
         id: updatedPayment.id,
         amount: updatedPayment.amount,
         description: updatedPayment.description,
-        paymentDate: updatedPayment.paymentDate,
+        nextPaymentDate: updatedPayment.nextPaymentDate,
         frequency: updatedPayment.frequency
       }))
       .catch(err => res.status(500).json({ message: err }));
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', isLoggedIn, (req, res) => {
   Payment
     .findByIdAndRemove(req.params.id)
     .then(() => {
@@ -103,5 +110,41 @@ router.delete('/:id', (req, res) => {
       res.status(204).end();
     });
 });
+
+router.delete('/testdelete/:id', (req, res) => {
+  Payment
+    .findByIdAndRemove(req.params.id)
+    .then(() => {
+      console.log(`Deleted payment with id \`${req.params.id}\``);
+      res.status(204).end();
+    });
+});
+
+function isLoggedIn(req, res, next) {
+
+  // if user is authenticated in the session, carry on 
+  if (req.isAuthenticated())
+      return next();
+
+  // if they aren't redirect them to the home page
+  res.redirect('/');
+}
+
+function billPaid() {
+
+}
+
+//button on front end will trigger this for an individual payment
+function getNextPaymentDate(nextPaymentDate, frequency) {
+  if (frequency = "daily") {
+    return nextPaymentDate.setDate(nextPaymentDate.getDate() + 1)
+  } else if(frequency = "weekly") {
+    return nextPaymentDate.setDate(nextPaymentDate.getDate() + 7)
+  } else if(frequency = "monthly") {
+    return nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
+  } else if(frequency = "yearly") {
+    return nextPaymentDate.setMonth(nextPaymentDate.getFullYear() + 1);
+  }
+}
 
 module.exports = router;
