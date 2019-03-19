@@ -1,0 +1,57 @@
+
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+    <div class="row">
+        <fieldset>
+            <form action="/payments" method="post">
+                <legend>Create Payment</legend>
+                <input type="text" name="amount" placeholder="Payment Amount">
+                <input type="text" name="description" placeholder="Description">
+                <input name="nextPaymentDate" placeholder = "Next Payment Date" type = "text" onfocus = "(this.type = 'date')"  id = "date">
+                <input type='text' name='frequency' placeholder="Frequency">
+                <!-- <select name="frequency" >
+                    <option value="" disabled selected>Frequency</option>
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                </select> -->
+                <input type="submit">
+            </form>
+        </fieldset>
+        <h2><%=payments.length%> - Payments</h2>
+    </div>
+    <% for(var i=0; i < payments.length; i++) { %>
+        <div >
+            <!-- <div class="col s12 m6"> -->
+                <div class="card blue darken-4">
+                    <div class="card-content white-text activator">
+                        <span class="card-title"><%= payments[i].description %></span>
+                        <p>Amount: <%= payments[i].amount %></p>
+                        <p>Frequency: <%= payments[i].frequency %></p>
+                        <p>Payment Date: <%= payments[i].nextPaymentDate.toDateString() %></p>
+                    </div>
+                    <div class="card-action card-links white blue-text text-darken-4 activator">
+                        <a href="#" onclick="paidBill()">Payment Made</a>
+                        <a href="#" onclick="updateBill()">Update Details</a>
+                        <a href="#" >Delete</a>
+                        <!-- <button type="submit" onclick="paidBill()">Bill Paid</button>
+                        <button type="submit" onclick="updateBill()">Update Details</button>
+                        <button type="submit" formaction="/payments" formmethod="DELETE">Delete</button> -->
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">Payment History<i class="material-icons right">X</i></span>
+                        <p>Here is where historical information about this bill will be</p>
+                    </div>
+                </div>
+            <!-- </div> -->
+        </div>
+    <% } %>
+</div>
+</body>
+</html>
