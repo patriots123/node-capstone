@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+var moment = require('moment');
 
 const { Payment } = require('../models/payment');
 const { User } = require('../models/user');
@@ -31,18 +32,19 @@ router.get('/testget', (req, res) => {
 });
 
 
-router.get('/:id', (req, res) => {
-    User
-    .findById()
-    Payment
-    .findById(req.params.id)
-    .then(payment => res.json(payment))
-    .catch(err => {
-        console.error(err);
-        res.status(500).json({ message: 'Internal server error' });
-    });
-});
+// router.get('/:id', (req, res) => {
+//     User
+//     .findById()
+//     Payment
+//     .findById(req.params.id)
+//     .then(payment => res.json(payment))
+//     .catch(err => {
+//         console.error(err);
+//         res.status(500).json({ message: 'Internal server error' });
+//     });
+// });
 
+//called when creating a new payment from the payments screen
 router.post('/', isLoggedIn, (req, res) => {
   const requiredFields = ['amount', 'description', 'nextPaymentDate','frequency'];
   for (let i = 0; i < requiredFields.length; i++) {
@@ -108,6 +110,7 @@ router.delete('/testdelete/:id', (req, res) => {
     .findOneAndRemove({_id:req.params.id})
     .then(() => {
       console.log(`Deleted payment with id \`${req.params.id}\``);
+      res.send(200)
     })
     .catch(err => {
       console.error(err);
@@ -152,22 +155,21 @@ router.post('/update/:id', (req,res) => {
 //incement historical data fields on payment and change next payment date when link is clicked on card
 router.get('/completed/:id', (req,res) => {
   let updatedPayment = {};
-  Payment.findOne({ _id:req.params.id })
+  Payment.findById(req.params.id)
   .then(payment => {
-    updatedPayment = {
-      totalAmountPaid: payment.totalAmountPaid + payment.amount, 
-      numPaymentsMade: payment.numPaymentsMade + 1,
-      nextPaymentDate: getNextPaymentDate(payment.nextPaymentDate)
-    };
+    updatedPayment.totalAmountPaid = payment.totalAmountPaid + payment.amount;
+    updatedPayment.numPaymentsMade = payment.numPaymentsMade + 1;
+    updatedPayment.nextPaymentDate = getNextPaymentDate(payment.nextPaymentDate, payment.frequency)+"";
+    console.log( getNextPaymentDate(payment.nextPaymentDate, payment.frequency));
     console.log(updatedPayment);
+    Payment.findByIdAndUpdate(req.params.id, updatedPayment, {new: true})
+    .then(res.redirect('/payment'))
   })
   .catch(err => {
     res.send(500).message("something went wrong")
   })
 
-  Payment.findByIdAndUpdate(req.params.id, {updatedPayment}, { new: true })
-  // .then(res.redirect('/payment'))
-  .then(payment => res.json(payment));
+  
 
 });
 
@@ -181,15 +183,20 @@ function isLoggedIn(req, res, next) {
 
 //button on front end will trigger this for an individual payment
 function getNextPaymentDate(nextPaymentDate, frequency) {
-  if (frequency = "daily") {
-    return nextPaymentDate.setDate(nextPaymentDate.getDate() + 1)
-  } else if(frequency = "weekly") {
-    return nextPaymentDate.setDate(nextPaymentDate.getDate() + 7)
-  } else if(frequency = "monthly") {
-    return nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
-  } else if(frequency = "yearly") {
-    return nextPaymentDate.setMonth(nextPaymentDate.getFullYear() + 1);
+  console.log(moment(nextPaymentDate).add(1, 'd').toDate());
+  console.log('frequency:',frequency);
+  let result;
+  if (frequency.toLowerCase() == "daily") {
+    result = moment(nextPaymentDate).add(1, 'd').toDate();
+  } else if(frequency.toLowerCase() == "weekly") {
+    result = moment(nextPaymentDate).add(1, 'w').toDate();
+  } else if(frequency.toLowerCase() == "monthly") {
+    result = moment(nextPaymentDate).add(1, 'm').toDate();
+  } else if(frequency.toLowerCase() == "yearly") {
+    result = moment(nextPaymentDate).add(1, 'y').toDate();
   }
+  console.log('result:',result);
+  return result;
 }
 
 module.exports = router;

@@ -1,6 +1,7 @@
 
 var User = require('../models/user');
 const { Payment } = require('../models/payment');
+var moment = require('moment');
 
 module.exports = function(app, passport) {
 
@@ -41,7 +42,8 @@ module.exports = function(app, passport) {
             .then(payments => {
                 res.render('pages/payment.ejs', {
                     user : req.user,
-                    payments: sortUserPayments(payments)
+                    payments: sortUserPayments(payments),
+                    moment: moment
                 });
             })
     });
