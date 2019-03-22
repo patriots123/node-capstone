@@ -60,11 +60,11 @@ router.post('/', isLoggedIn, (req, res) => {
       nextPaymentDate: req.body.nextPaymentDate,
       frequency: req.body.frequency,
       user: req.user._id,
-      numPayments: 0,
+      numPaymentsMade: 0,
       totalAmountPaid: 0
     })
-    .then(payment => res.status(201).json(payment))
-    .then(res.redirect('/profile'))
+    // .then(payment => res.status(201).json(payment))
+    .then(res.redirect('/payment'))
     .catch(err => {
       console.error(err);
       res.status(500).json({ error: 'Something went wrong' });
@@ -102,36 +102,81 @@ router.put('/:id', (req, res) => {
       .catch(err => res.status(500).json({ message: err }));
 });
 
-router.delete('/:id', isLoggedIn, (req, res) => {
+//DELETE that can be called through AJAX from client.js
+router.delete('/testdelete/:id', (req, res) => {
   Payment
-    .findByIdAndRemove(req.params.id)
+    .findOneAndRemove({_id:req.params.id})
     .then(() => {
       console.log(`Deleted payment with id \`${req.params.id}\``);
-      res.status(204).end();
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Something went wrong' });
     });
 });
 
-router.delete('/testdelete/:id', (req, res) => {
+//delete payment when card link is clicked
+router.get('/delete/:id', isLoggedIn, (req,res)=> {
   Payment
-    .findByIdAndRemove(req.params.id)
+    .findOneAndRemove({_id:req.params.id, user:req.user._id})
     .then(() => {
       console.log(`Deleted payment with id \`${req.params.id}\``);
-      res.status(204).end();
+      res.redirect('/payment');
+    })
+    .catch(err => {
+      res.send(500).message("something went wrong")
+    })
+});
+
+//update payment information when card link is clicked
+router.post('/update/:id', (req,res) => {
+  const updated = {};
+  const updateableFields = ['amount', 'description', 'nextPaymentDate','frequency'];
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      updated[field] = req.body[field];
+    }
+  });
+
+  Payment
+    .findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
+    .then(() => {
+      res.redirect('/payment');
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Something went wrong' });
     });
+});
+
+//incement historical data fields on payment and change next payment date when link is clicked on card
+router.get('/completed/:id', (req,res) => {
+  let updatedPayment = {};
+  Payment.findOne({ _id:req.params.id })
+  .then(payment => {
+    updatedPayment = {
+      totalAmountPaid: payment.totalAmountPaid + payment.amount, 
+      numPaymentsMade: payment.numPaymentsMade + 1,
+      nextPaymentDate: getNextPaymentDate(payment.nextPaymentDate)
+    };
+    console.log(updatedPayment);
+  })
+  .catch(err => {
+    res.send(500).message("something went wrong")
+  })
+
+  Payment.findByIdAndUpdate(req.params.id, {updatedPayment}, { new: true })
+  // .then(res.redirect('/payment'))
+  .then(payment => res.json(payment));
+
 });
 
 function isLoggedIn(req, res, next) {
-
   // if user is authenticated in the session, carry on 
-  if (req.isAuthenticated())
-      return next();
-
-  // if they aren't redirect them to the home page
+  if (req.isAuthenticated()) {
+    return next();
+  }
   res.redirect('/');
-}
-
-function billPaid() {
-
 }
 
 //button on front end will trigger this for an individual payment

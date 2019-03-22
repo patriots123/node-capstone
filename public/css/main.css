@@ -3,6 +3,8 @@
 * {
     box-sizing: border-box;
 }
+
+
 .payment {
     border: solid black 1px;
     margin-bottom: 20px;
@@ -27,4 +29,12 @@
 
 .card-links a {
     color: blue !important;
+}
+
+.delete-payment:hover {
+    cursor: pointer;
+}
+
+.update-details-button {
+    cursor: pointer;
 }

@@ -10,7 +10,7 @@ const paymentSchema = mongoose.Schema({
   nextPaymentDate: Date,
   frequency: String,
   createdDate: {type: Date, default: Date.now},
-  numPayments: Number,
+  numPaymentsMade: Number,
   totalAmountPaid: Number
 });
 

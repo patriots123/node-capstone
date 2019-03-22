@@ -1,0 +1,75 @@
+
+<% include ../partials/header %>
+
+<main>
+<div class="container">
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span>Payments Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+    <div class="row">
+        <form class="col s12" action="/payments" method="post">
+            <legend>Create Payment</legend>
+              <div class="input-field col s12">
+                <input id="description" name="description" type="text" class="validate" value="electric bill" required>
+                <label for="description">Description</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="amount" name="amount" type="text" class="validate" value="130" required>
+                <label for="amount">Amount</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="date" name="nextPaymentDate" type="text" class="datepicker" value="2019-04-20" required>
+                <label for="date">Next Payment Date</label>
+              </div>
+              <div class="input-field col s12">
+                <input type='text' name='frequency' placeholder="Frequency" value="Daily" required>
+            </div>
+            <!-- <div class="input-field col s12">
+                    <select>
+                      <option value="" disabled selected>Choose your option</option>
+                      <option value="Daily">Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Yearly">Yearly</option>
+                    </select>
+                    <label>Materialize Select</label>
+                  </div> -->
+            <button class="waves-effect waves-light btn">Create</button>
+        </form>
+    </div>
+    <h2><%=payments.length%> - Payments</h2>
+    <% for(var i=0; i < payments.length; i++) { %>
+        <div class="card blue darken-4">
+            <div class="card-content white-text">
+                <span class="card-title"><%= payments[i].description %></span>
+                <p>Amount: <%= payments[i].amount %></p>
+                <p>Frequency: <%= payments[i].frequency %></p>
+                <p>Payment Date: <%= payments[i].nextPaymentDate.toDateString() %></p>
+                <!-- <p hidden class="payment-id"><%= payments[i]._id %></p> -->
+            </div>
+            <div class="card-action card-links white blue-text text-darken-4">
+                <!-- <a href="/payments/completed/<%= payments[i]._id %>" class="activator">Payment Made</a> -->
+                <a href="/payments/completed/<%= payments[i]._id %>">Payment Made</a>
+                <a class="update-details-button activator">Update Details</a>
+                <a href='/payments/delete/<%= payments[i]._id %>'>Delete</a>
+                <!-- <a class="delete-payment">Delete</a> -->
+                <!-- <span><i class="material-icons right activator">more_vert</i></span> -->
+            </div>
+            <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></span>
+                <form action="payments/update/<%= payments[i]._id %>" method="POST">
+                    <input type="text"name="description" value="this title has been updated">
+                    <input type="text" name="amount" value="150"> 
+                    <input type="date" name="nextPaymentDate" value="2019-04-21">
+                    <input type='text' name='frequency' placeholder="Frequency" value="yearly">
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    <% } %>
+</div>
+<main>
+
+
+<% include ../partials/footer %>

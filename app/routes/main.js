@@ -32,14 +32,14 @@ module.exports = function(app, passport) {
     });
 
     // =====================================
-    // PROFILE SECTION =====================
+    // payment SECTION =====================
     // =====================================
     // we will want this protected so you have to be logged in to visit
     // we will use route middleware to verify this (the isLoggedIn function)
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/payment', isLoggedIn, function(req, res) {
         Payment.find({user:req.user._id})
             .then(payments => {
-                res.render('pages/profile.ejs', {
+                res.render('pages/payment.ejs', {
                     user : req.user,
                     payments: sortUserPayments(payments)
                 });
