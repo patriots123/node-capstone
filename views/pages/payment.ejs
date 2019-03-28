@@ -12,38 +12,41 @@
             <legend>Create Payment</legend>
             <div class="row">
               <div class="input-field col s6">
-                <input id="description" name="description" type="text" class="validate" value="electric bill" required>
+                <input id="description" name="description" type="text" class="validate" required>
                 <label for="description">Description</label>
               </div>
               <div class="input-field col s6">
-                <input id="amount" name="amount" type="text" class="validate" value="130" required>
+                <input id="amount" name="amount" type="number" class="validate" required>
                 <label for="amount">Amount</label>
               </div>
             </div>
             <div class="row">
               <div class="input-field col s6">
-                <input id="date" name="nextPaymentDate" type="text" class="datepicker" value="2019-04-20" required>
+                <input id="date" name="nextPaymentDate" type="date" class="datepicker" required>
                 <label for="date">Next Payment Date</label>
               </div>
-              <!-- <div class="input-field col s6">
-                <input id="frequency" type='text' name='frequency' placeholder="Frequency" value="Daily" required>
-                <label for="frequency">Frequency</label>
-            </div> -->
             <div class="input-field col s6">
               <select name="frequency">
-                <!-- <option value="" disabled selected>Choose your option</option> -->
-                <option value="Daily" selected>Daily</option>
+                <option value="Daily">Daily</option>
                 <option value="Weekly">Weekly</option>
-                <option value="Monthly">Monthly</option>
+                <option value="Monthly" selected>Monthly</option>
                 <option value="Yearly">Yearly</option>
               </select>
               <label>Frequency</label>
             </div>
         </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="paymentWebsite" name="paymentWebsite" type="url" value="https://" class="validate" required>
+            <label for="paymentWebsite">Payment Website</label>
+          </div>
+        </div>
         <button class="waves-effect waves-light btn">Create</button>
         </form>
     </div>
-    <h2><%=payments.length%> - Payments</h2>
+    <div>
+        <h3><%=payments.length%> Payments</h3>
+    </div>
     <% for(var i=0; i < payments.length; i++) { %>
         <div class="card <%= (moment() > moment(payments[i].nextPaymentDate)) ? 'red' : 'blue'  %> darken-4">
             <div class="card-content white-text">
@@ -51,41 +54,46 @@
                 <p>Amount: <%= payments[i].amount %></p>
                 <p>Frequency: <%= payments[i].frequency %></p>
                 <p>Payment Date: <%= payments[i].nextPaymentDate.toDateString() %></p>
+                <p>Payment Website: <%= payments[i].paymentWebsite %></p>
                 <!-- <p hidden class="payment-id"><%= payments[i]._id %></p> -->
             </div>
             <div class="card-action card-links white blue-text text-darken-4">
-                <!-- <a href="/payments/completed/<%= payments[i]._id %>" class="activator">Payment Made</a> -->
                 <a href="/payments/completed/<%= payments[i]._id %>">Payment Made</a>
                 <a class="update-details-button activator">Update Details</a>
                 <a href='/payments/delete/<%= payments[i]._id %>'>Delete</a>
-                <!-- <a class="delete-payment">Delete</a> -->
                 <!-- <span><i class="material-icons right activator">more_vert</i></span> -->
             </div>
             <div class="card-reveal">
                 <!-- <span class="card-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></span> -->
                 <form class="payment-update-form" action="payments/update/<%= payments[i]._id %>" method="POST">
-                    <legend class="card-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></legend>
+                    <legend class="card-title card-reveal-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></legend>
                     <div class="row">
                       <div class="input-field col s6">
-                        <input type="text" name="description" placeholder="Description" value="this title has been updated">
+                        <input type="text" name="description" value="<%= payments[i].description %>">
                       </div>
                       <div class="input-field col s6">
-                        <input type="text" name="amount" placeholder="Amount" value="150"> 
+                        <input type="number" name="amount" value="<%= payments[i].amount %>"> 
                       </div>
                     </div>
                     <div class="row">
                       <div class="input-field col s6">
-                        <input type="date" name="nextPaymentDate" placeholder="Next Payment Date" value="2019-04-21">
+                        <input type="date" name="nextPaymentDate" value="<%= payments[i].nextPaymentDate.toDateString() %>">
                       </div>
                       <div class="input-field col s6">
-                        <input type='text' name='frequency' placeholder="Frequency" value="yearly">
+                        <select name="frequency">
+                          <option value="Daily">Daily</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Monthly" selected>Monthly</option>
+                          <option value="Yearly">Yearly</option>
+                        </select>
                       </div>
                     </div>
-                    <!-- <input type="text" name="description" placeholder="Description" value="this title has been updated">
-                    <input type="text" name="amount" placeholder="Amount" value="150">  -->
-                    <!-- <input type="date" name="nextPaymentDate" placeholder="Next Payment Date" value="2019-04-21">
-                    <input type='text' name='frequency' placeholder="Frequency" value="yearly"> -->
-                    <button type="submit" class="waves-effect waves-light btn">Update</button>
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <input value="<%= payments[i].paymentWebsite %>" name="paymentWebsite" type="url" class="validate">
+                      </div>
+                    </div>
+                    <button type="submit" class="waves-effect waves-light btn pay-update-button">Update</button>
                 </form>
             </div>
         </div>

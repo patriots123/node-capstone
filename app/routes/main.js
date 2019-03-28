@@ -9,7 +9,7 @@ module.exports = function(app, passport) {
     // HOME PAGE (with login links) ========
     // =====================================
     app.get('/', function(req, res) {
-        res.render('pages/index.ejs'); // load the index.ejs file
+        res.render('pages/index.ejs',{user:req.user}); // load the index.ejs file
     });
 
     // =====================================
@@ -19,7 +19,7 @@ module.exports = function(app, passport) {
     app.get('/login', function(req, res) {
 
         // render the page and pass in any flash data if it exists
-        res.render('pages/login.ejs', { message: req.flash('loginMessage') }); 
+        res.render('pages/login.ejs', { message: req.flash('loginMessage'),user:req.user }); 
     });
 
     // =====================================
@@ -29,14 +29,10 @@ module.exports = function(app, passport) {
     app.get('/signup', function(req, res) {
 
         // render the page and pass in any flash data if it exists
-        res.render('pages/signup.ejs', { message: req.flash('signupMessage') });
+        res.render('pages/signup.ejs', { message: req.flash('signupMessage'),user:req.user });
     });
 
-    // =====================================
-    // payment SECTION =====================
-    // =====================================
-    // we will want this protected so you have to be logged in to visit
-    // we will use route middleware to verify this (the isLoggedIn function)
+    // payment section
     app.get('/payment', isLoggedIn, function(req, res) {
         Payment.find({user:req.user._id})
             .then(payments => {
@@ -46,6 +42,10 @@ module.exports = function(app, passport) {
                     moment: moment
                 });
             })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'unable to get payments' });
+              });
     });
 
     app.get('/users', (req, res) => {

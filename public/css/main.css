@@ -14,9 +14,7 @@
 
 .nav-title {
     margin: 0;
-    /* max-width: 50px;
-    max-height: 100%;
-    text-align:  center; */
+    margin-left: 10px;
 }
 
 .nav-wrapper {
@@ -55,10 +53,6 @@
     font-weight: bold;
 }
 
-/* .payment-update-form {
-
-} */
-
 .payment-update-form input {
     margin: 0;
     max-height: 30px;
@@ -70,4 +64,18 @@
 
 .payment-update-form .input-field {
     margin: 0;
+}
+
+.card-reveal-title {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin-bottom: 5px;
+}
+
+.pay-update-button {
+    margin-top: 5px !important;
+}
+
+.nav-title {
+    padding-top: 15px !important;
 }
