@@ -169,9 +169,7 @@ function getNextPaymentDate(nextPaymentDate, frequency) {
   } else if(frequency.toLowerCase() == "weekly") {
     result = moment(nextPaymentDate).add(1, 'w').toDate();
   } else if(frequency.toLowerCase() == "monthly") {
-    console.log(nextPaymentDate);
     result = moment(nextPaymentDate).add(1, 'M').toDate();
-    console.log(result);
   } else if(frequency.toLowerCase() == "yearly") {
     result = moment(nextPaymentDate).add(1, 'y').toDate();
   }

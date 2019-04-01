@@ -5,6 +5,7 @@ const chaiHttp = require('chai-http');
 const faker = require('faker');
 const mongoose = require('mongoose');
 const id = require('mongoose').Types.ObjectId();
+const moment = require('moment');
 
 const expect = chai.expect;
 
@@ -16,12 +17,9 @@ chai.use(chaiHttp);
 
 function seedPaymentData() {
   console.info('seeding payment data');
-//   const seedPaymentData = [];
   for (let i=1; i<=10; i++) {
-    // seedPaymentData.push(generatePaymentSeedData());
     Payment.create(generatePaymentSeedData());
   }
-//   Payment.insertMany(seedPaymentData);
 }
 
 function generatePaymentSeedData() {
@@ -65,7 +63,6 @@ describe("test payment route HTTP requests", function() {
 
     describe("test GET /payments", function() {
         it ("should return all existing payments posts for a user", () => {
-          let res;
           return chai.request(app)
             .get('/payments')
             .then(function(res) {
@@ -77,7 +74,6 @@ describe("test payment route HTTP requests", function() {
     describe("test POST /payments", function() {
         it('should create a new payment', function() {
           const newPayment = generatePaymentSeedData();
-        //   console.log(newPayment);
           return chai.request(app)
             .post('/payments/testpost')
             .send(newPayment)
@@ -94,18 +90,12 @@ describe("test payment route HTTP requests", function() {
               .findOne()
               .then(function(_payment) {
                   payment = _payment
-                //   console.log(_payment);
                   return chai.request(app)
                   .get(`/payments/delete/${_payment._id}`);
               })
               .then(function(res) {
                   expect(res).to.have.status(200);
-                  return Payment.findById(payment._id);
               })
-            //   .then(function(payment) {
-            //       console.log(payment);
-            //       expect(payment).to.be.null;
-            //   });
         });
     })
 
@@ -124,4 +114,20 @@ describe("test payment route HTTP requests", function() {
     //     })
     //     })
     // })
+
+    describe("test GET /payments/completed/:id", function() {
+        it('should update totalAmountPaid, numPaymentsMade, nextPaymentDate', function() {
+            let payment;
+            return Payment
+              .findOne()
+              .then(function(_payment) {
+                  payment = _payment;
+                  return chai.request(app)
+                  .get(`/payments/completed/${_payment._id}`);
+              })
+              .then(function(res) {
+                  expect(res).to.have.status(200);
+              })  
+        });
+    })
 });

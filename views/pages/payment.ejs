@@ -5,7 +5,6 @@
 <div class="container">
     <div class="page-header text-center">
         <h1><span class="fa fa-anchor"></span>Manage Payments</h1>
-        <!-- <a href="/logout" class="btn btn-default btn-sm">Logout</a> -->
     </div>
     <div class="row">
         <form class="col s12 payment-creation-form z-depth-3" action="/payments" method="post">
@@ -55,16 +54,13 @@
                 <p>Frequency: <%= payments[i].frequency %></p>
                 <p>Payment Date: <%= payments[i].nextPaymentDate.toDateString() %></p>
                 <p>Payment Website: <%= payments[i].paymentWebsite %></p>
-                <!-- <p hidden class="payment-id"><%= payments[i]._id %></p> -->
             </div>
             <div class="card-action card-links white blue-text text-darken-4">
                 <a href="/payments/completed/<%= payments[i]._id %>">Payment Made</a>
                 <a class="update-details-button activator">Update Details</a>
                 <a href='/payments/delete/<%= payments[i]._id %>'>Delete</a>
-                <!-- <span><i class="material-icons right activator">more_vert</i></span> -->
             </div>
             <div class="card-reveal">
-                <!-- <span class="card-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></span> -->
                 <form class="payment-update-form" action="payments/update/<%= payments[i]._id %>" method="POST">
                     <legend class="card-title card-reveal-title grey-text text-darken-4">Update Payment<i class="material-icons right">close</i></legend>
                     <div class="row">
