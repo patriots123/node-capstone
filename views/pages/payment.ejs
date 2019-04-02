@@ -4,7 +4,7 @@
 <main>
 <div class="container">
     <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span>Manage Payments</h1>
+        <h1 class="manage-payments-title"><span class="fa fa-anchor"></span>Manage Payments</h1>
     </div>
     <div class="row">
         <form class="col s12 payment-creation-form z-depth-3" action="/payments" method="post">
@@ -21,7 +21,7 @@
             </div>
             <div class="row">
               <div class="input-field col s6">
-                <input id="date" name="nextPaymentDate" type="date" class="datepicker" required>
+                <input id="date" name="nextPaymentDate" type="text" class="datepicker" required>
                 <label for="date">Next Payment Date</label>
               </div>
             <div class="input-field col s6">
@@ -73,7 +73,7 @@
                     </div>
                     <div class="row">
                       <div class="input-field col s6">
-                        <input type="date" name="nextPaymentDate" value="<%= payments[i].nextPaymentDate.toDateString() %>">
+                        <input type="text" name="nextPaymentDate" value="<%= payments[i].nextPaymentDate.toDateString() %>">
                       </div>
                       <div class="input-field col s6">
                         <select name="frequency">

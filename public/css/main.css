@@ -79,3 +79,27 @@
 .nav-title {
     padding-top: 15px !important;
 }
+
+
+@media only screen and (max-width: 363px) {
+    .manage-payments-title {
+        margin-top: 5 !important;
+        font-size: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px) {
+    .nav-title {
+        display: none !important;
+    }
+
+
+}
+
+@media only screen and (max-width: 443px) {
+    .card-action a {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
+
