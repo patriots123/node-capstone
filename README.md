@@ -4,6 +4,8 @@
   and password. They can then go into their account to view their already created payments, create a new payment to track, delete old or unused payments, and to update the information
   of existing payments.
 
+  ![Link to Live App](home_page.png)
+
   ![Home Page](home_page.png)
   ![Login Page](login_page.png)
   ![Signup Page](signup_page.png)
