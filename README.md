@@ -4,9 +4,9 @@
   and password. They can then go into their account to view their already created payments, create a new payment to track, delete old or unused payments, and to update the information
   of existing payments.
 
-  ![Link to Live App](home_page.png)
+  ![Link to Live App](https://node-bill-app.herokuapp.com/)
 
-  ![Home Page](home_page.png)
+  ![Home Page](https://node-bill-app.herokuapp.com/public/img/home_page.png)
   ![Login Page](login_page.png)
   ![Signup Page](signup_page.png)
   ![Payment Management - Create Payment](payment_management_payment_creation.png)
