@@ -6,9 +6,9 @@
 
   [Link to Live App](https://node-bill-app.herokuapp.com/)
 
-  ![Home Page](https://node-bill-app.herokuapp.com/public/img/home_page.png)
-  ![Login Page](login_page.png)
-  ![Signup Page](signup_page.png)
-  ![Payment Management - Create Payment](payment_management_payment_creation.png)
-  ![Payment Management - View Payments](payment_management_results.png)
-  ![Payment Management - Update Details](payment_management_update_details.png)
+  [Home Page](public/img/home_page.png)
+  [Login Page](public/img/login_page.png)
+  [Signup Page](signup_page.png)
+  [Payment Management - Create Payment](payment_management_payment_creation.png)
+  [Payment Management - View Payments](payment_management_results.png)
+  [Payment Management - Update Details](payment_management_update_details.png)
