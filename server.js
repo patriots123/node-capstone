@@ -37,7 +37,7 @@ let server;
 
 function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, err => {
+    mongoose.connect(process.env.MONGODB_URI || databaseUrl, err => {
       if (err) {
         return reject(err);
       }
